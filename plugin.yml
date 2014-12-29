@@ -1,0 +1,7 @@
+name: EnderPerl
+main: EnderPerl\Main
+version: 1.0.0
+api: [1.0.0, 1.1.0]
+load: POSTWORLD
+authors: [Yosshi999]
+description: "EnderPerl!"
