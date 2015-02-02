@@ -1,7 +1,23 @@
 name: EnderPerl
 main: EnderPerl\Main
-version: 1.1.0
+version: 1.2.0
 api: [1.0.0, 1.1.0]
 load: POSTWORLD
 authors: [Yosshi999]
 description: "EnderPerl!"
+
+commands:
+ enderperl:
+  description: "setting of EnderPerl"
+  usage: "/enderperl <key> <value>"
+  permission: enderperl.setting
+permissions:
+ enderperl.*:
+  description: Allows player to use all permissions
+  children:
+   enderperl.setting:
+    default: op
+    description: Allows player to edit EnderPerl config
+   enderperl.teleport:
+    default: true
+    description: Allows player to teleport by using EnderPerl
