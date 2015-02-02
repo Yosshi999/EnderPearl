@@ -4,6 +4,9 @@ namespace EnderPerl;
 use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
+
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\entity\ProjectileLaunchEvent;
 use pocketmine\event\entity\EntityDespawnEvent;
@@ -12,10 +15,14 @@ use pocketmine\entity\Snowball;
 use pocketmine\Player;
 use pocketmine\level\Position;
 
+use pocketmine\utils\Config;
+
 class Main extends PluginBase implements Listener{
 
 	/** @var Array */
 	private $order;
+	/** @var Config */ 
+	private $config;
 	
 	public function __construct(){
 		$this->order = array();
@@ -24,9 +31,37 @@ class Main extends PluginBase implements Listener{
 	public function onEnable(){
 		$this->getServer()->getPluginManager()->registerEvents($this, $this);
 		
+		$this->config = new Config( $this->getDataFolder()."config.properties",Config::PROPERTIES,array("damage"=>5) );
 		$this->getLogger()->info("EnderPerl loaded!");
 	}
-	
+
+	public function onDisable(){
+		$this->config->save();
+		$this->getLogger()->info("EnderPerl unloaded!");
+	}
+
+	public function onCommand(CommandSender $sender, Command $cmd, $label,array $params){
+		if($cmd->getName() === "enderperl"){
+			$sub = array_shift($params);
+			switch($sub){
+				case "damage":
+					$amount = array_shift($params);
+					if( !is_numeric($amount) or $amount < 0 ){$sender->sendMessage("invalid value");return true;}
+					
+					$amount = floor($amount);
+					$this->config->set("damage",$amount);
+					$sender->sendMessage("teleport damage has changed into ".$amount);
+					return true;
+					
+				default:
+					$sender->sendMessage("Usage: /enderperl damage <value> :Change the amount of teleport damage");
+					return true;
+			}
+		}
+	}
+
+
+/* ============================ system ==============================================*/	
 	public function onProjectileLaunch(ProjectileLaunchEvent $event){
 		$entity = $event->getEntity();
 		if($entity instanceof Snowball){
@@ -56,15 +91,14 @@ class Main extends PluginBase implements Listener{
 			$shooter = $entity->shootingEntity;
 			$posTo = $entity->getPosition();
 			
-			if($shooter instanceof Player && $posTo instanceof Position){
+			if($shooter instanceof Player && $shooter->hasPermission("enderperl.teleport") && $posTo instanceof Position){
 				$id = $shooter->getId();
 				$key = array_search($ballid,$this->order[$id]);
 				if(array_key_exists($id,$this->order) && $key!==false ){
 					unset($this->order[$id][$key]);
 					$posFrom = $shooter->getPosition();
-//					$this->getLogger()->info($shooter->getName()." is at ".$posTo->__toString() );
 					$shooter->teleport($posTo);
-					$shooter->attack(5);
+					$shooter->attack( $this->config->get("damage") );
 				}
 			}
 		}
@@ -78,10 +112,5 @@ class Main extends PluginBase implements Listener{
 		}
 	}
 
-	public function onDisable(){
-		
-		$this->getLogger()->info("EnderPerl unloaded!");
-	}
-	
 }
 
