@@ -4,11 +4,11 @@ version: 1.2.0
 api: [1.0.0, 1.1.0]
 load: POSTWORLD
 authors: [Yosshi999]
-description: "EnderPerl!"
+description: "EnderPearl!"
 
 commands:
  enderperl:
-  description: "setting of EnderPerl"
+  description: "setting of EnderPearl"
   usage: "/enderperl <key> <value>"
   permission: enderperl.setting
 permissions:
@@ -17,7 +17,7 @@ permissions:
   children:
    enderperl.setting:
     default: op
-    description: Allows player to edit EnderPerl config
+    description: Allows player to edit EnderPearl config
    enderperl.teleport:
     default: true
-    description: Allows player to teleport by using EnderPerl
+    description: Allows player to teleport by using EnderPearl
