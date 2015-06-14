@@ -105,8 +105,10 @@ class Main extends PluginBase implements Listener{
 						$posFrom = $shooter->getPosition();
 						
 						$shooter->teleport($posTo);
-						$ev = new EntityDamageEvent( $shooter, EntityDamageEvent::CAUSE_MAGIC, $this->config->get("damage") );
-						$shooter->attack($ev->getFinalDamage(), $ev);
+						if(!$shooter->isCreative()){
+							$ev = new EntityDamageEvent( $shooter, EntityDamageEvent::CAUSE_MAGIC, $this->config->get("damage") );
+							$shooter->attack($ev->getFinalDamage(), $ev);
+						}
 					}
 				}
 			}
