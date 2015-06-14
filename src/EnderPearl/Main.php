@@ -13,6 +13,7 @@ use pocketmine\event\entity\EntityDespawnEvent;
 
 use pocketmine\entity\Snowball;
 use pocketmine\Player;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\level\Position;
 use pocketmine\math\Vector3;
 
@@ -104,7 +105,8 @@ class Main extends PluginBase implements Listener{
 						$posFrom = $shooter->getPosition();
 						
 						$shooter->teleport($posTo);
-						$shooter->attack( $this->config->get("damage") );
+						$ev = new EntityDamageEvent( $shooter, EntityDamageEvent::CAUSE_MAGIC, $this->config->get("damage") );
+						$shooter->attack($ev->getFinalDamage(), $ev);
 					}
 				}
 			}
